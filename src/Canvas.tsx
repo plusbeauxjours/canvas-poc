@@ -1,53 +1,39 @@
 import React, {useRef, useEffect} from 'react';
 
-export const CanvasA = (props) => {
+export const Canvas = (props) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     canvas.width = 800;
-    canvas.height = 400;
+    canvas.height = 800;
 
-    ctx.fillRect(200, 200, 50, 200);
-    ctx.fillRect(400, 200, 50, 200);
     ctx.lineWidth = 2;
-    ctx.strokeRect(300, 300, 50, 100);
-    ctx.fillRect(200, 200, 200, 20);
-    ctx.moveTo(200, 200);
-    ctx.lineTo(325, 100);
-    ctx.stroke();
-    ctx.lineTo(450, 200);
-    ctx.fill();
 
-    // ... draw initial canvas here ...
-  }, []);
+    const onClick = (event) => {
+      ctx.beginPath();
+      ctx.moveTo(400, 400);
+      const colors = [
+        '#ff3838',
+        '#ffb8b8',
+        '#c56cf0',
+        '#ff9f1a',
+        '#fff200',
+        '#32ff7e',
+        '#7efff5',
+        '#18dcff',
+        '#7d5fff',
+      ];
 
-  return <canvas ref={canvasRef} {...props} />;
-};
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      ctx.strokeStyle = color;
+      ctx.lineTo(event.offsetX, event.offsetY);
+      ctx.stroke();
+    };
 
-export const CanvasB = (props) => {
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    canvas.width = 800;
-    canvas.height = 400;
-
-    ctx.fillRect(210, 200, 15, 100);
-    ctx.fillRect(350, 200, 15, 100);
-    ctx.fillRect(260, 200, 60, 200);
-    ctx.arc(290, 160, 40, 0, 2 * Math.PI);
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.arc(275, 150, 5, Math.PI, 2 * Math.PI);
-    ctx.arc(305, 150, 5, Math.PI, 2 * Math.PI);
-    ctx.fillStyle = 'white';
-    ctx.fill();
-
-    // ... draw initial canvas here ...
+    // canvas.addEventListener('click', onClick);
+    canvas.addEventListener('mousemove', onClick);
   }, []);
 
   return <canvas ref={canvasRef} {...props} />;

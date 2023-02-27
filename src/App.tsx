@@ -1,13 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
-import {CanvasA, CanvasB} from './Canvas';
+import {Canvas} from './Canvas';
 
 function App() {
   return (
     <Container>
       <Box>
-        <CanvasA />
-        <CanvasB />
+        <Canvas />
       </Box>
     </Container>
   );
