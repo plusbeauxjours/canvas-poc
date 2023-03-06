@@ -2,20 +2,24 @@ import React, {useRef, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import {colors} from './constants';
 
-export const Canvas = ({...props}) => {
+export const CanvasComponent = ({...props}) => {
   const canvasRef = useRef(null);
   const [lineWidth, setLineWidth] = useState<string>('5');
-  const [lineColor, setLineColor] = useState<string>('#000');
+  const [lineColor, setLineColor] = useState<string>(colors[0]);
+
+  let isPainting = false;
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
+
     ctx.lineWidth = lineWidth;
   }, [lineWidth]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
+
     ctx.strokeStyle = lineColor;
     ctx.fillStyle = lineColor;
   }, [lineColor]);
@@ -23,11 +27,14 @@ export const Canvas = ({...props}) => {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
+
     canvas.width = 800;
     canvas.height = 800;
 
     ctx.lineWidth = lineWidth;
-    let isPainting = false;
+
+    ctx.strokeStyle = lineColor;
+    ctx.fillStyle = lineColor;
 
     function onMove(event) {
       if (isPainting) {
@@ -43,10 +50,6 @@ export const Canvas = ({...props}) => {
     function cancelPainting() {
       isPainting = false;
       ctx.beginPath();
-    }
-    function onLineWidthChange(event) {
-      console.log(event.target.value);
-      ctx.lineWidth = event.target.value;
     }
 
     canvas.addEventListener('mousemove', onMove);
@@ -65,8 +68,8 @@ export const Canvas = ({...props}) => {
 
   return (
     <>
-      <canvas ref={canvasRef} {...props} />
-      <input
+      <Canvas ref={canvasRef} {...props} />
+      <Input
         type="range"
         min="1"
         max="10"
@@ -74,7 +77,7 @@ export const Canvas = ({...props}) => {
         value={lineWidth}
         onChange={onChangeLineWidth}
       />
-      <input type="color" value={lineColor} />
+      <Input type="color" value={lineColor} readOnly />
       {colors.map((color, index) => (
         <ColorBox
           key={index}
@@ -85,6 +88,10 @@ export const Canvas = ({...props}) => {
     </>
   );
 };
+
+const Canvas = styled.canvas``;
+
+const Input = styled.input``;
 
 const ColorBox = styled.div`
   width: 50px;
