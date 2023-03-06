@@ -3,12 +3,15 @@ import React, {useRef, useEffect, useState} from 'react';
 export const Canvas = ({...props}) => {
   const canvasRef = useRef(null);
   const [lineWidth, setLineWidth] = useState<string>('5')
+  const [lineColor, setLineColor] = useState<string>('#000')
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     ctx.lineWidth = lineWidth;
-  }, [lineWidth])
+    ctx.strokeStyle = lineColor;
+    ctx.fillStyle = lineColor;
+  }, [lineWidth, lineColor])
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -16,6 +19,8 @@ export const Canvas = ({...props}) => {
     canvas.width = 800;
     canvas.height = 800;
 
+    ctx.strokeStyle = lineColor;
+    ctx.fillStyle = lineColor;
     ctx.lineWidth = lineWidth;
     let isPainting = false;
 
@@ -45,9 +50,19 @@ export const Canvas = ({...props}) => {
     canvas.addEventListener("mouseleave", cancelPainting);
   }, []);
 
-  const onChange = (event) => {
+  const onChangeLineWidth = (event) => {
     setLineWidth(event.target.value)
   }
 
-  return <><canvas ref={canvasRef} {...props} /><input type="range" min="1" max="10" step='0.1' value={lineWidth}  onChange={onChange}/></>
+  const onChangeLineColor = (event) => {
+    setLineColor(event.target.value)
+  }
+
+  return (
+    <>
+      <canvas ref={canvasRef} {...props} />
+      <input type="range" min="1" max="10" step='0.1' value={lineWidth} onChange={onChangeLineWidth}/>
+      <input type="color" value={lineColor} onChange={onChangeLineColor}/>
+    </>
+  )
 };
