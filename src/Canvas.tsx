@@ -1,7 +1,14 @@
-import React, {useRef, useEffect} from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 
-export const Canvas = (props) => {
+export const Canvas = ({...props}) => {
   const canvasRef = useRef(null);
+  const [lineWidth, setLineWidth] = useState<string>('5')
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    ctx.lineWidth = lineWidth;
+  }, [lineWidth])
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -9,32 +16,38 @@ export const Canvas = (props) => {
     canvas.width = 800;
     canvas.height = 800;
 
-    ctx.lineWidth = 2;
+    ctx.lineWidth = lineWidth;
+    let isPainting = false;
 
-    const onClick = (event) => {
+    function onMove(event) {
+      if (isPainting) {
+        ctx.lineTo(event.offsetX, event.offsetY);
+        ctx.stroke();
+        return;
+      }
+      ctx.moveTo(event.offsetX, event.offsetY);
+    }
+    function startPainting() {
+      isPainting = true;
+    }
+    function cancelPainting() {
+      isPainting = false;
       ctx.beginPath();
-      ctx.moveTo(400, 400);
-      const colors = [
-        '#ff3838',
-        '#ffb8b8',
-        '#c56cf0',
-        '#ff9f1a',
-        '#fff200',
-        '#32ff7e',
-        '#7efff5',
-        '#18dcff',
-        '#7d5fff',
-      ];
+    }
+    function onLineWidthChange(event) {
+      console.log(event.target.value);
+      ctx.lineWidth = event.target.value;
+    }
 
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      ctx.strokeStyle = color;
-      ctx.lineTo(event.offsetX, event.offsetY);
-      ctx.stroke();
-    };
-
-    // canvas.addEventListener('click', onClick);
-    canvas.addEventListener('mousemove', onClick);
+    canvas.addEventListener("mousemove", onMove);
+    canvas.addEventListener("mousedown", startPainting);
+    canvas.addEventListener("mouseup", cancelPainting);
+    canvas.addEventListener("mouseleave", cancelPainting);
   }, []);
 
-  return <canvas ref={canvasRef} {...props} />;
+  const onChange = (event) => {
+    setLineWidth(event.target.value)
+  }
+
+  return <><canvas ref={canvasRef} {...props} /><input type="range" min="1" max="10" step='0.1' value={lineWidth}  onChange={onChange}/></>
 };
