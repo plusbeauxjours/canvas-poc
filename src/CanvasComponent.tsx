@@ -32,6 +32,7 @@ export const CanvasComponent = ({...props}) => {
     const modeBtn = document.getElementById('mode-btn');
     const destroyBtn = document.getElementById('destroy-btn');
     const eraserBtn = document.getElementById('eraser-btn');
+    const textInput = document.getElementById('text') as HTMLInputElement;
     const fileInput = document.getElementById('file') as HTMLInputElement;
 
     const CANVAS_WIDTH = 800;
@@ -41,6 +42,7 @@ export const CanvasComponent = ({...props}) => {
     canvas.height = CANVAS_HEIGHT;
 
     ctx.lineWidth = lineWidth;
+    ctx.lineCap = 'round';
 
     ctx.strokeStyle = lineColor;
     ctx.fillStyle = lineColor;
@@ -98,11 +100,22 @@ export const CanvasComponent = ({...props}) => {
       };
     }
 
+    function onDoubleClick(event) {
+      const text = textInput.value;
+      if (text !== '') {
+        ctx.save();
+        ctx.lineWidth = 1;
+        ctx.font = "68px 'Press Start 2P'";
+        ctx.fillText(text, event.offsetX, event.offsetY);
+        ctx.restore();
+      }
+    }
     canvas.addEventListener('mousemove', onMove);
     canvas.addEventListener('mousedown', startPainting);
     canvas.addEventListener('mouseup', cancelPainting);
     canvas.addEventListener('mouseleave', cancelPainting);
     canvas.addEventListener('click', onCanvasClick);
+    canvas.addEventListener('dblclick', onDoubleClick);
 
     modeBtn.addEventListener('click', onModeClick);
     destroyBtn.addEventListener('click', onDestroyClick);
@@ -130,6 +143,7 @@ export const CanvasComponent = ({...props}) => {
         onChange={onChangeLineWidth}
       />
       <input type="file" accept="image/*" id="file" />
+      <input type="text" placeholder="Write and then double click" id="text" />
       <Input type="color" value={lineColor} readOnly />
       {colors.map((color, index) => (
         <ColorBox
