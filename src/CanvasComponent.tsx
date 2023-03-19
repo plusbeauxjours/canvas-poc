@@ -32,6 +32,7 @@ export const CanvasComponent = ({...props}) => {
     const modeBtn = document.getElementById('mode-btn');
     const destroyBtn = document.getElementById('destroy-btn');
     const eraserBtn = document.getElementById('eraser-btn');
+    const fileInput = document.getElementById('file') as HTMLInputElement;
 
     const CANVAS_WIDTH = 800;
     const CANVAS_HEIGHT = 800;
@@ -86,6 +87,17 @@ export const CanvasComponent = ({...props}) => {
       }
     }
 
+    function onFileChange(event) {
+      const file = event.target.files[0];
+      const url = URL.createObjectURL(file);
+      const image = new Image();
+      image.src = url;
+      image.onload = function () {
+        ctx.drawImage(image, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        fileInput.value = null;
+      };
+    }
+
     canvas.addEventListener('mousemove', onMove);
     canvas.addEventListener('mousedown', startPainting);
     canvas.addEventListener('mouseup', cancelPainting);
@@ -95,6 +107,7 @@ export const CanvasComponent = ({...props}) => {
     modeBtn.addEventListener('click', onModeClick);
     destroyBtn.addEventListener('click', onDestroyClick);
     eraserBtn.addEventListener('click', onEraserClick);
+    fileInput.addEventListener('change', onFileChange);
   }, []);
 
   const onChangeLineWidth = (event) => {
@@ -116,6 +129,7 @@ export const CanvasComponent = ({...props}) => {
         value={lineWidth}
         onChange={onChangeLineWidth}
       />
+      <input type="file" accept="image/*" id="file" />
       <Input type="color" value={lineColor} readOnly />
       {colors.map((color, index) => (
         <ColorBox
